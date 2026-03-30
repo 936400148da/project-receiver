@@ -65,12 +65,15 @@ void addControllerPeer()
 
 void handleCommand(int cmd)
 {
-  Serial.print("cmd ");
+  // test print
+  Serial.print("CMD RECEIVED: ");
   Serial.println(cmd);
-  if (cmd == 1)
-  {
-    Serial.println("Hello");
+
+  if (!(cmd < 6 && cmd >= 0)) {
+    return;
   }
+  
+  // handle command
 }
 
 void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status)
