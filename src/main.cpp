@@ -2,6 +2,12 @@
 #include <ESP_NOW.h>
 #include "WiFi.h"
 #include <ostream>
+#include <FastLED.h>
+
+#define LED_PIN 5
+#define NUM_LEDS 10
+
+CRGB leds[NUM_LEDS];
 
 uint8_t controllerAddress[6];
 bool controllerAdded = false;
@@ -62,8 +68,45 @@ void addControllerPeer(){
 }
 
 void handleCommand(int cmd){
-  if(cmd == 1){
-    Serial.println("Hello");
+  switch (cmd)
+  {
+  case Hard:
+    Serial.println("HARD");
+    leds[0] = CRGB::Green;
+    leds[2] = CRGB::Green;
+    leds[4] = CRGB::Green;
+    leds[6] = CRGB::Green;
+    break;
+  case Clean:
+    Serial.println("Clean");
+    leds[1] = CRGB::Blue;
+    leds[3] = CRGB::Blue;
+    leds[5] = CRGB::Blue;
+    leds[7] = CRGB::Blue;
+    break;
+  case Left:
+    Serial.println("Left");
+    leds[0] = CRGB::White;
+    leds[1] = CRGB::White;
+    leds[2] = CRGB::White;
+    leds[3] = CRGB::White;
+    break;
+  case Right:
+    Serial.println("Right");
+    leds[4] = CRGB::Yellow;
+    leds[5] = CRGB::Yellow;
+    leds[6] = CRGB::Yellow;
+    leds[7] = CRGB::Yellow;
+    break;
+  case Stop:
+    Serial.println("Stop");
+    for(int i = 0; i < NUM_LEDS; i ++){
+      leds[i] = CRGB::Red;
+    }
+    break;
+  default:
+    Serial.println("UNKNOW!");
+    break;
   }
 }
 
@@ -118,6 +161,12 @@ void setup() {
   }
 
   esp_now_register_recv_cb(OnDataRecv);
+
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.clear();
+  FastLED.show();
+  Serial.println("receiver ready");
+  
   esp_now_register_send_cb(OnDataSent);
 }
 
